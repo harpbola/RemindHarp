@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/LinearLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListView
+        android:id="@+id/listReminders"
+        android:layout_width="fill_parent"
+        android:layout_height="416dp"
+        android:layout_weight="0.34"
+        android:background="#222"
+        android:scrollbars="vertical" >
+
+    </ListView>
+
+    <LinearLayout
+        android:id="@+id/actions"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:fadingEdge="horizontal|vertical"
+        android:gravity="right"
+        android:onClick=""
+        android:padding="10dp" >
+
+        <Button
+            android:id="@+id/buttonOk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@android:string/ok"
+            android:width="60dp" />
+    </LinearLayout>
+
+</LinearLayout>
