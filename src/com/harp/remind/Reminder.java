@@ -14,7 +14,7 @@ import android.util.Log;
 public class Reminder {
 
 	private static final String TAG = "REMINDER";
-	int id;
+	long id;
 	String title, description;
 	Date alarmTime;
 
@@ -88,7 +88,7 @@ public class Reminder {
 		values.put(Table.COL_ALARAM_TIME, alarm_time);
 		return values;
 	}
-	public static void insert(DatabaseHelper dh, CharSequence title, CharSequence description, 
+	public static long insert(DatabaseHelper dh, CharSequence title, CharSequence description, 
 			int hour, int minute) {
 		SQLiteDatabase db = dh.getDatabase();
 		// Proper data
@@ -99,7 +99,32 @@ public class Reminder {
 		dateTime.setSeconds(0);
 		ContentValues values = createContentValues(
 				title.toString(), description.toString(), dateFormat.format(dateTime));
-		db.insert(Table.NAME, null, values);
+		return db.insert(Table.NAME, null, values);
+	}
+
+	public boolean delete(DatabaseHelper dh) {
+		SQLiteDatabase db = dh.getDatabase();
+		return db.delete(Table.NAME, Table.COL_ID + "=" + this.id, null) > 0;
+	}
+
+	public static Reminder get(DatabaseHelper dh, long id) {
+		SQLiteDatabase db = dh.getDatabase();
+		Cursor cursor = db.query(Reminder.Table.NAME, Reminder.getColumns(),
+				Table.COL_ID + "=" + id, null, null, null, null);
+		Log.d(TAG, "cursor: "+ cursor);
+		if(cursor.moveToFirst()){
+			return  new Reminder(cursor);
+		}
+		return null;		
+	}
+	
+	public static Reminder get(DatabaseHelper dh, int id) {
+		return Reminder.get(dh, (long) id);
+	}
+
+	public static boolean delete(DatabaseHelper dh, long reminder_id) {
+		SQLiteDatabase db = dh.getDatabase();
+		return db.delete(Table.NAME, Table.COL_ID + "=" + reminder_id, null) > 0;
 	}
 
 }

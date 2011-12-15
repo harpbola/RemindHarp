@@ -16,7 +16,7 @@
         android:id="@+id/description"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Small Text"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:text="@string/long_text"
+        android:textAppearance="?android:attr/textAppearanceSmall" android:maxLines="2" android:ellipsize="end"/>
 
 </LinearLayout>

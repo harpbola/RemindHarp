@@ -11,5 +11,7 @@
     <string name="minus">-</string>
     <string name="plus">+</string>
     <string name="minute">Minute</string>
+    <string name="small_text">This is like a simple description about it.</string>
+    <string name="long_text">This is serious description because itis very long and clearly defines the reminder. Who else would take time to deal with this but me, huh? Lorem ipsum? No way!</string>
 
 </resources>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="16dp"
+        android:background="#ffff99"
+        android:padding="5dp"
+        android:shadowColor="#ff0000"
+        android:shadowDx=".5"
+        android:shadowDy=".5"
+        android:shadowRadius=".5"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#000" />
+
+    <TextView
+        android:id="@+id/textDescription"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/actions"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textTitle"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="#ffff99"
+        android:padding="5dp"
+        android:scrollbars="vertical"
+        android:text="@string/long_text"
+        android:textColor="#000" android:layout_alignBaseline="@id/actions"/>
+
+    <RelativeLayout
+        android:id="@+id/actions"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textDescription"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/textDescription"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp" >
+
+        <Button
+            android:id="@+id/buttonKeep"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="Keep" />
+
+        <Button
+            android:id="@+id/buttonDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:text="Delete" />
+    </RelativeLayout>
+
+</RelativeLayout>

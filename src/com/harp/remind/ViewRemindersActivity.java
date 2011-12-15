@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,68 +24,39 @@ import android.content.Context;
 public class ViewRemindersActivity extends Activity implements OnClickListener,
 		OnItemClickListener {
 
-	private static final String TAG = "RemindHarp";
+	private static final String TAG = "ViewRemindersActivity";
 	Button buttonOk;
 	ListView listReminders;
-	DatabaseHelper db;
-	ArrayAdapter<String> adapter;
-	/*
-	public class RemindersAdapter extends ArrayAdapter<String> {
+	DatabaseHelper dh;
+	// ArrayAdapter<String> adapter;
+	RemindersAdapter adapter;
+	ArrayList<Reminder> reminders;
+	int positionClicked;
 
-		private final Context context;
-		ArrayList<Reminder> reminders;
-
-		public RemindersAdapter(Context context, int textViewResourceId,
-				ArrayList<Reminder> reminders) {
-			super(context, textViewResourceId, new String[] {"train", "from", "to"});
-			String [] dummy = {};
-			this.context = context;
-			this.reminders = reminders;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			// TODO Auto-generated method stub
-			// return super.getView(position, convertView, parent);
-			LayoutInflater inflater = (LayoutInflater) context
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View row = inflater.inflate(R.layout.row, parent, false);
-			// INITIALIZE variables
-			TextView title = (TextView) row.findViewById(R.id.title);
-			TextView description = (TextView) row.findViewById(R.id.description);
-			
-			// POPULATE views
-			Reminder reminder = this.reminders.get(position);
-			title.setText(reminder.title);
-			description.setText(reminder.description);
-			return row;
-		}
+	protected void populateList()
+	{
+		reminders = Reminder.getReminders(dh);
+		Log.d(TAG, "Reminders: " + reminders);
+		adapter = new RemindersAdapter(this,
+				android.R.layout.simple_list_item_1, reminders);
+		listReminders.setAdapter(adapter);
 	}
-	*/
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.view_reminders);
 
 		// INITALIZE instance variables
-		db = new DatabaseHelper(this);
+		Log.d(TAG, "onCreate");
+		dh = new DatabaseHelper(this);
 		buttonOk = (Button) findViewById(R.id.buttonOk);
 		listReminders = (ListView) findViewById(R.id.listReminders);
-
+		
 		// POPULATE
-//		ArrayList<Reminder> reminders = Reminder.getReminders(db);
-//		Log.d(TAG, "Reminders: " + reminders);
-//		RemindersAdapter adapter = new RemindersAdapter(this,
-//				android.R.layout.simple_list_item_1, reminders);
-//		listReminders.setAdapter(adapter);
-		String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
-				"Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
-				"Linux", "OS/2" };
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, values);
-		listReminders.setAdapter(adapter);
-		Log.d(TAG, "Database: " + db);
-
+		populateList();
+		positionClicked = -1;
+		
 		// ASSIGN on click listeners
 		buttonOk.setOnClickListener(this);
 		listReminders.setOnItemClickListener(this);
@@ -94,9 +66,9 @@ public class ViewRemindersActivity extends Activity implements OnClickListener,
 	public void onClick(View source) {
 		Log.d(TAG, "Clicked: " + source);
 		switch (source.getId()) {
-			case R.id.buttonOk:
-				finish();
-				break;
+		case R.id.buttonOk:
+			finish();
+			break;
 
 		}
 	}
@@ -105,8 +77,34 @@ public class ViewRemindersActivity extends Activity implements OnClickListener,
 	public void onItemClick(AdapterView<?> arg0, View source, int position,
 			long id) {
 		Log.d(TAG, "Clicked: " + source);
-		String item = adapter.getItem(position);
-		Log.d(TAG, "Item: " + item);
-		// Toast.makeText(this, item + " selected", Toast.LENGTH_LONG).show();
+		positionClicked = position;
+		Reminder reminder = adapter.getReminder(position);
+		Log.d(TAG, "Item: " + reminder);
+		Intent intent = new Intent(Intent.ACTION_VIEW,
+				Uri.parse("remind:" + reminder.id));
+		startActivityForResult(intent, 1);
+		Log.d(TAG, "Finished: " + reminder);
 	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int deletedReminderId, Intent data) {
+		super.onActivityResult(requestCode, deletedReminderId, data);
+		Log.d(TAG, "resultCode: " + deletedReminderId);
+		Log.d(TAG, "positionClicked: " + positionClicked);
+		if (deletedReminderId > 0 && positionClicked != -1) {
+			Log.d(TAG, "listReminders: "+ listReminders);
+			Log.d(TAG, "Item : "+ listReminders.findViewById(deletedReminderId));
+			// HIDE the row
+			View view = listReminders.findViewById(deletedReminderId);
+//			view.setVisibility(View.INVISIBLE);
+//			view.setVisibility(View.GONE);
+			listReminders.removeViewInLayout(view);
+			listReminders.refreshDrawableState();
+		} 
+	}
+	
+	public void onDestroy() {
+	    super.onDestroy();
+	    dh.close();
+	}; 
 }

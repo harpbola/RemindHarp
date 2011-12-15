@@ -1,6 +1,12 @@
 package com.harp.remind;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +14,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class CreateReminderActivity extends Activity implements OnClickListener {
 
@@ -18,8 +25,7 @@ public class CreateReminderActivity extends Activity implements OnClickListener 
 	TextView textHour, textMinute;
 	// hour: 0-23, minute: 1-59
 	int hour = 0, minute = 0;
-	DatabaseHelper db;
-	
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -27,8 +33,6 @@ public class CreateReminderActivity extends Activity implements OnClickListener 
 		setContentView(R.layout.create_reminder);
 
 		// INITALIZE instance variables
-        db = new DatabaseHelper(this);
-        
 		textHour = (TextView) findViewById(R.id.textHour);
 		buttonHourPlus = (Button) findViewById(R.id.buttonHourPlus);
 		buttonHourMinus = (Button) findViewById(R.id.buttonHourMinus);
@@ -41,8 +45,9 @@ public class CreateReminderActivity extends Activity implements OnClickListener 
 		buttonCancel = (Button) findViewById(R.id.buttonCancel);
 
 		// INITIALIZE view fields
-		setHourText(this.hour);
-		setMinuteText(this.minute);
+		Date dateTime = new Date();
+		setHourText(dateTime.getHours());
+		setMinuteText(dateTime.getMinutes());
 
 		// ASSIGN on click listeners
 		buttonAdd.setOnClickListener(this);
@@ -55,40 +60,56 @@ public class CreateReminderActivity extends Activity implements OnClickListener 
 		buttonMinuteMinus.setOnClickListener(this);
 	}
 
+	
+	
 	@Override
 	public void onClick(View source) {
 		Intent intent;
 		switch (source.getId()) {
-			case R.id.buttonHourPlus:
-				Log.d(TAG, "Clicked buttonHourPlus.");
-				setHourText(this.hour + 1);
-				break;
-			case R.id.buttonHourMinus:
-				Log.d(TAG, "Clicked buttonHourMinus.");
-				setHourText(this.hour - 1);
-				break;
+		case R.id.buttonHourPlus:
+			Log.d(TAG, "Clicked buttonHourPlus.");
+			setHourText(this.hour + 1);
+			break;
+		case R.id.buttonHourMinus:
+			Log.d(TAG, "Clicked buttonHourMinus.");
+			setHourText(this.hour - 1);
+			break;
 
-			case R.id.buttonMinutePlus:
-				Log.d(TAG, "Clicked buttonMinutePlus.");
-				setMinuteText(this.minute + 1);
-				break;
-			case R.id.buttonMinuteMinus:
-				Log.d(TAG, "Clicked buttonMinuteMinus.");
-				setMinuteText(this.minute - 1);
-				break;
+		case R.id.buttonMinutePlus:
+			Log.d(TAG, "Clicked buttonMinutePlus.");
+			setMinuteText(this.minute + 1);
+			break;
+		case R.id.buttonMinuteMinus:
+			Log.d(TAG, "Clicked buttonMinuteMinus.");
+			setMinuteText(this.minute - 1);
+			break;
 
-			case R.id.buttonAdd:
-				Log.d(TAG, "Clicked buttonAdd.");
-				TextView textTitle = (TextView) findViewById(R.id.textTitle);
-				TextView textDescription = (TextView) findViewById(R.id.textDescription);
-				Reminder.insert(this.db, textTitle.getText(), textDescription.getText(), hour, minute);
-				finish();
-				break;
-				
-			case R.id.buttonCancel:
-				Log.d(TAG, "Clicked buttonCancel.");
-				finish();
-				break;
+		case R.id.buttonAdd:
+			Log.d(TAG, "Clicked buttonAdd.");
+			// GET fields
+			TextView textTitle = (TextView) findViewById(R.id.textTitle);
+			TextView textDescription = (TextView) findViewById(R.id.textDescription);
+			
+			// CALL the service
+			intent = new Intent(this, ReminderService.class);
+			intent.putExtra("action", ReminderService.INSERT_INTENT);
+			intent.putExtra("title", textTitle.getText().toString() );
+			intent.putExtra("description", textDescription.getText().toString() );
+			intent.putExtra("hour", hour);
+			intent.putExtra("minute", minute);
+			startService(intent);
+			
+			// Close this and the parent
+			intent = new Intent();
+			setResult(RemindHarpActivity.KILL, intent);
+			finish();
+
+			break;
+
+		case R.id.buttonCancel:
+			Log.d(TAG, "Clicked buttonCancel.");
+			finish();
+			break;
 
 		}
 	}

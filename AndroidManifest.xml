@@ -18,8 +18,25 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="CreateReminderActivity" android:label="@string/createReminder"></activity>
-        <activity android:name=".ViewRemindersActivity" android:label="@string/viewReminders"></activity>
+        <activity
+            android:label="@string/createReminder"
+            android:name="CreateReminderActivity" >
+        </activity>
+        <activity
+            android:label="@string/viewReminders"
+            android:name=".ViewRemindersActivity" >
+        </activity>
+        <activity
+            android:label="@string/app_name"
+            android:name="FullReminderActivity" >
+            <intent-filter >
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="remind" />
+            </intent-filter>
+        </activity>
+        <receiver  android:process=":remote" android:name=".CreateNotification"></receiver>
+        <service android:name=".ReminderService" />
     </application>
 
 </manifest>
